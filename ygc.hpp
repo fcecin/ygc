@@ -6,6 +6,7 @@
 
 #include <eosio/asset.hpp>
 #include <eosio/eosio.hpp>
+#include <eosio/transaction.hpp>
 
 #include <string>
 
@@ -51,6 +52,12 @@ namespace eosio {
 
       [[eosio::action]]
          void income( name to, asset quantity, string memo );
+
+      struct income_notification_abi {
+         name        to;
+         asset       quantity;
+         string      memo;
+      };
 
       static asset get_supply( name token_contract_account, symbol_code sym_code )
       {
@@ -101,7 +108,7 @@ namespace eosio {
       void sub_balance( name owner, asset value );
       void add_balance( name owner, asset value, name ram_payer );
 
-      void try_ubi_claim( name from, const symbol& sym, stats& statstable, const currency_stats& st, bool fail );
+      void try_ubi_claim( name from, const symbol& sym, name payer, stats& statstable, const currency_stats& st, bool fail );
 
       void log_claim( name claimant, asset claim_quantity, time_type next_last_claim_day, time_type lost_days );
 
@@ -120,8 +127,8 @@ namespace eosio {
 
       static const time_type last_signup_reward_day = 0; // Signup rewards off
 
-      static const uint64_t units_per_day = 328549; // 32.8549 coins per day, or 1000 per month.
-                                                    // This is hard-coded for a token precision of 4.
+      static const int64_t units_per_day = 328549; // 32.8549 coins per day, or 1000 per month.
+                                                   // This is hard-coded for a token precision of 4.
    };
 
 } /// namespace eosio

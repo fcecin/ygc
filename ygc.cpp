@@ -3,7 +3,7 @@
  *  http://github.com/fcecin/ygc
  */
 
-#include <dailycoin.hpp>
+#include <ygc.hpp>
 
 namespace eosio {
 
@@ -155,7 +155,7 @@ namespace eosio {
       stats statstable( _self, COIN_SYMBOL.raw() );
       const auto& st = statstable.get( COIN_SYMBOL.raw() );
 
-      try_ubi_claim( owner, COIN_SYMBOL, statstable, st, true );
+      try_ubi_claim( owner, COIN_SYMBOL, owner, statstable, st, true );
    }
 
    void token::burn( name owner, asset quantity )
@@ -249,8 +249,8 @@ namespace eosio {
          claim_amount = max_past_claim_days;
       }
 
-      // Claim for a given number of days.
-      claim_amount += claim_days;
+      // Claim for one day.
+      claim_amount += 1;
 
       int64_t precision_multiplier = get_precision_multiplier(sym);
 
