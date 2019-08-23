@@ -151,9 +151,12 @@ namespace eosio {
    void token::claim( name owner ) {
       require_auth( owner );
       require_recipient( owner );
+
+      // in case the user didn't have an open balance yet, now they will have one.
+      open( owner, COIN_SYMBOL, owner );
     
-      stats statstable( _self, COIN_SYMBOL.raw() );
-      const auto& st = statstable.get( COIN_SYMBOL.raw() );
+      stats statstable( _self, COIN_SYMBOL.code().raw() );
+      const auto& st = statstable.get( COIN_SYMBOL.code().raw() );
 
       try_ubi_claim( owner, COIN_SYMBOL, owner, statstable, st, true );
    }
@@ -252,10 +255,11 @@ namespace eosio {
       // Claim for one day.
       claim_amount += 1;
 
-      int64_t precision_multiplier = get_precision_multiplier(sym);
+      // unused since units_per_day has the precision multiplier included in it
+      //int64_t precision_multiplier = get_precision_multiplier(sym);
 
-      // units_per_day is hardcoded to a precision of 4.
-      asset claim_quantity = asset{claim_amount * units_per_day * precision_multiplier, sym};
+      // units_per_day is hardcoded to a precision of 4 and acts as the precision multiplier in this formula.
+      asset claim_quantity = asset{claim_amount * units_per_day, sym}; // * precision_multiplier
 
       // Respect the max_supply limit for UBI issuance.
       int64_t available_amount = st.max_supply.amount - st.supply.amount;
